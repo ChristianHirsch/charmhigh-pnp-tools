@@ -42,6 +42,8 @@ parser.add_argument('-x', '--extend', action='store_const', const=True,
     default=False, help="extend the part name of resistors, capacitors and "
                     "inductors (i.e. part numbers with an R, C or L) with the "
                     "corresponding unit (i.e. Ohm for R, F for C and H for L)")
+parser.add_argument('-u', '--unused-removal', action='store_const', const=True,
+    default=False, help="remove unused stacks from outfile")
 args = parser.parse_args()
 
 def error_exit(msg, f = None, lno = None):
@@ -193,6 +195,8 @@ parts.sort(key=lambda tup: tup[4]) # same order as in 'machine_stack'
 # inform the user about parts in the machine stack which are not used:
 for p in sorted(set(machine_stack) - set([ p[1] for p in parts ])):
     print(f"\x1b[34mInfo: part {p} in the machine stack is not used\x1b[0m")
+    if args.unused_removal:
+        del machine_stack[p]
 
 ################################################################################
 # TRANSFORM COORDINATES ACCORDING TO BOARD ORIENTATION:
